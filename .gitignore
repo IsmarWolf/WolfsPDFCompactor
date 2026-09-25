@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local data folders (contain your PDFs — never push these)
+pastaorigem/
+pastacompactada/
+
+# Logs and temporary files
+*.log
+tmp_*.py
+tmp_*.pdf

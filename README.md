@@ -59,14 +59,14 @@ pip install -r requirements.txt
 
 ## Quick start
 
-1. Put the PDFs you want to compress inside the `pastaorigem` folder.
+1. Put the PDFs you want to compress inside the `source_pdfs` folder.
 2. Run:
 
 ```bash
 python compactadorpdf.py
 ```
 
-3. The compressed files will be created in `pastacompactada`.
+3. The compressed files will be created in `compressed_pdfs`.
 
 The script skips files that were already compressed in a previous run, so it is safe to run multiple times.
 
@@ -95,8 +95,8 @@ You can adjust the defaults directly in the script or pass values from the comma
 
 | Setting | Default | Purpose |
 |---|---:|---|
-| `INPUT_DIR` | `pastaorigem` | Folder containing PDFs to compress |
-| `OUTPUT_DIR` | `pastacompactada` | Folder where compressed PDFs are saved |
+| `INPUT_DIR` | `source_pdfs` | Folder containing PDFs to compress |
+| `OUTPUT_DIR` | `compressed_pdfs` | Folder where compressed PDFs are saved |
 | `MAX_DPI` | `150` | Maximum rendering resolution |
 | `MAX_PAGE_SIDE` | `1800` | Maximum page width or height in pixels |
 | `JPEG_QUALITY` | `62` | JPEG quality (lower = smaller, higher = better quality) |
@@ -105,8 +105,8 @@ You can adjust the defaults directly in the script or pass values from the comma
 ### CLI options
 
 ```bash
---input PATH            input folder with the PDFs     (default: pastaorigem)
---output PATH           output folder                  (default: pastacompactada)
+--input PATH            input folder with the PDFs     (default: source_pdfs)
+--output PATH           output folder                  (default: compressed_pdfs)
 --dpi N                 max render resolution in DPI   (default: 150)
 --max-page-side N       max page dimension in pixels   (default: 1800)
 --quality N             JPEG quality 1-100             (default: 62)
@@ -130,12 +130,12 @@ Compactador/
 ├── compactadorpdf.py
 ├── requirements.txt
 ├── README.md
-├── pastaorigem/
-└── pastacompactada/
+├── source_pdfs/
+└── compressed_pdfs/
 ```
 
-- `pastaorigem` is where you place the original PDFs.
-- `pastacompactada` is where the compressed versions are written.
+- `source_pdfs` is where you place the original PDFs.
+- `compressed_pdfs` is where the compressed versions are written.
 
 ## Tips
 

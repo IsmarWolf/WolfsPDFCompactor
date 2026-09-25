@@ -36,8 +36,8 @@ import pymupdf
 # Edit these values directly... or override them from the command line
 # (see `python compactadorpdf.py --help`). Values below are the defaults.
 # =====================================================================
-INPUT_DIR = Path("pastaorigem")       # folder containing the PDFs to compress
-OUTPUT_DIR = Path("pastacompactada")  # folder where compressed PDFs are saved
+INPUT_DIR = Path("source_pdfs")       # folder containing the PDFs to compress
+OUTPUT_DIR = Path("compressed_pdfs")  # folder where compressed PDFs are saved
 MAX_DPI = 150                 # max render resolution in dots per inch
 MAX_PAGE_SIDE = 1800          # max page dimension in pixels; balances quality vs size
 JPEG_QUALITY = 62             # JPEG quality: 1 = smallest, 100 = best

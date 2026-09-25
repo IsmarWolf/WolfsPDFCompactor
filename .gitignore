@@ -4,9 +4,11 @@ __pycache__/
 .venv/
 venv/
 
-# Local data folders (contain your PDFs — never push these)
-pastaorigem/
-pastacompactada/
+# Local data folders — contents are ignored, only the placeholder files are tracked
+source_pdfs/*
+!source_pdfs/.gitkeep
+compressed_pdfs/*
+!compressed_pdfs/.gitkeep
 
 # Logs and temporary files
 *.log

@@ -1,117 +1,153 @@
-# Wolf's PDF Compactor
+# PDF Compactor
 
-Batch-compress PDFs by rasterizing every page into a JPEG at a controlled resolution and quality. Folder of 25 GB of scanned PDFs? This typically cuts it by **~80%**, from ~250 MB down to ~45 MB per file, while keeping pages perfectly readable.
+A simple batch tool for reducing PDF file size by re-encoding scanned or image-heavy pages as JPEGs at a controlled resolution.
 
-```
-Turma da Mônica Jovem Edição 34.pdf    203.3 MB  ->   42.7 MB
-Turma da Mônica Jovem Edição 56.pdf    226.1 MB  ->   44.3 MB
-...
-Total                                21.8  GB  ->  4.4 GB   (-80%)
-```
+This project is useful when you have large PDFs made mostly of scanned documents, forms, reports, or handwritten pages. The script keeps the page layout and readability while shrinking the file size significantly.
 
-## Why does it work so well?
+Typical results vary by document type, but image-heavy PDFs often shrink by 50% to 90% without major quality loss.
 
-The input PDFs are usually just scanned images. This tool re-encodes each page:
+## What it does
 
-1. Renders the page at a sensible size (**max 1800 px** per side by default, no need for huge 4000 px scans).
-2. Encodes it as a **JPEG** (quality 62 by default).
-3. Rebuilds a new PDF with the same page dimensions but dramatically smaller files.
+The script works by:
+
+1. Opening each PDF page.
+2. Rendering it at a limited size and DPI.
+3. Saving the page as a JPEG with a chosen quality.
+4. Rebuilding the PDF with the same page dimensions.
+
+This is especially effective for scanned documents, where pages are basically images rather than text-heavy vector content.
+
+## Features
+
+- Batch compression of all PDFs in a folder
+- Output folder for compressed files
+- Skips files that are already compact enough
+- Supports custom DPI, page size, and JPEG quality
+- Can process a subset of files by numeric suffix
+- Uses parallel workers to speed up larger batches
 
 ## Requirements
 
 - Python 3.9+
-- [PyMuPDF](https://pypi.org/project/PyMuPDF/) (`pip install pymupdf`)
+- [PyMuPDF](https://pypi.org/project/PyMuPDF/)
 
-No other dependencies, no Ghostscript needed.
+Install the dependency with:
+
+```bash
+pip install -r requirements.txt
+```
 
 ## Installation
 
 ```bash
-# 1. Clone / download this repository
-git clone https://github.com/IsmarWolf/WolfsPDFCompactor.git
-cd WolfsPDFCompactor
+# Clone or download the repository
+git clone <repository-url>
+cd Compactador
 
-# 2. (Recommended) create a virtual environment
+# Optional but recommended
 python -m venv .venv
+
 # Windows
 .venv\Scripts\activate
+
 # macOS / Linux
 source .venv/bin/activate
 
-# 3. Install dependencies
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Quick Start
+## Quick start
 
 1. Put the PDFs you want to compress inside the `pastaorigem` folder.
-2. Run the tool:
+2. Run:
 
 ```bash
 python compactadorpdf.py
 ```
 
-3. Grab the compressed PDFs from the `pastacompactada` folder.
+3. The compressed files will be created in `pastacompactada`.
 
-That's it. Files already compressed in a previous run are **skipped automatically**, so you can re-run safely.
+The script skips files that were already compressed in a previous run, so it is safe to run multiple times.
 
-## Configuration
-
-Easiest way: edit the values at the top of `compactadorpdf.py`:
-
-| Constant | Default | What it does |
-|---|---|---|
-| `INPUT_DIR` | `pastaorigem` | Folder with the PDFs to compress |
-| `OUTPUT_DIR` | `pastacompactada` | Where compressed PDFs are saved |
-| `MAX_DPI` | `150` | Max render resolution (dots per inch) |
-| `MAX_PAGE_SIDE` | `1800` | Max page size in pixels — the main size/quality lever |
-| `JPEG_QUALITY` | `62` | JPEG quality (1 = smallest, 100 = best) |
-| `MAX_WORKERS` | `8` | How many PDFs are processed at the same time |
-
-These same values can also be passed as command-line options (they override the file):
+## Examples
 
 ```bash
-# Custom folders and a lighter compression
-python compactadorpdf.py --input my/pdfs --output out --dpi 120 --quality 55
+# Process every PDF in the default input folder
+python compactadorpdf.py
 
-# Smaller pages = even smaller files
-python compactadorpdf.py --max-page-side 1400 --quality 50
+# Use custom folders
+python compactadorpdf.py --input ./incoming --output ./compressed
 
-# Compress only specific files (#34, and #50 through #99)
-python compactadorpdf.py --numbers 34 50-99
+# Reduce size more aggressively
+python compactadorpdf.py --dpi 120 --quality 55 --max-page-side 1400
 
-# See everything
+# Only process files ending with specific numbers
+python compactadorpdf.py --numbers 12 15-20
+
+# Show the full command-line help
 python compactadorpdf.py --help
 ```
 
-### Full CLI reference
+## Configuration
 
+You can adjust the defaults directly in the script or pass values from the command line.
+
+| Setting | Default | Purpose |
+|---|---:|---|
+| `INPUT_DIR` | `pastaorigem` | Folder containing PDFs to compress |
+| `OUTPUT_DIR` | `pastacompactada` | Folder where compressed PDFs are saved |
+| `MAX_DPI` | `150` | Maximum rendering resolution |
+| `MAX_PAGE_SIDE` | `1800` | Maximum page width or height in pixels |
+| `JPEG_QUALITY` | `62` | JPEG quality (lower = smaller, higher = better quality) |
+| `MAX_WORKERS` | `8` | Number of files processed in parallel |
+
+### CLI options
+
+```bash
+--input PATH            input folder with the PDFs     (default: pastaorigem)
+--output PATH           output folder                  (default: pastacompactada)
+--dpi N                 max render resolution in DPI   (default: 150)
+--max-page-side N       max page dimension in pixels   (default: 1800)
+--quality N             JPEG quality 1-100             (default: 62)
+--workers N             files processed in parallel    (default: 8)
+--numbers N...          only process matching file names, e.g. 12 15-20
 ```
---input PATH            input folder with the PDFs   (default: pastaorigem)
---output PATH           output folder                 (default: pastacompactada)
---dpi N                 max render resolution in DPI  (default: 150)
---max-page-side N       max page dimension in pixels  (default: 1800)
---quality N             JPEG quality 1-100            (default: 62)
---workers N             files in parallel             (default: 8)
---numbers N...          only files ending in these numbers, e.g. 34 50-99
-```
+
+## Typical usage scenarios
+
+This tool works well for:
+
+- scanned contracts and invoices
+- PDF reports exported from scanners
+- archive folders containing image-based documents
+- reducing large document sets without buying special software
 
 ## Folder layout
 
-```
-wolfs-pdf-compactor/
-├── compactadorpdf.py     <- the tool
+```text
+Compactador/
+├── compactadorpdf.py
 ├── requirements.txt
 ├── README.md
-├── pastaorigem/          <- drop your PDFs here (not committed to git)
-└── pastacompactada/      <- compressed PDFs land here (not committed to git)
+├── pastaorigem/
+└── pastacompactada/
 ```
 
-## Tuning tips
+- `pastaorigem` is where you place the original PDFs.
+- `pastacompactada` is where the compressed versions are written.
 
-- **Bigger reduction** → lower `--max-page-side` (e.g. `1400`) or `--quality` (e.g. `50`).
-- **Better quality** → raise them (`--max-page-side 2200 --quality 75`).
-- The tool **never writes a file larger than the original** — if a PDF can't be reduced it is skipped.
-- Output files keep the same page dimensions as the input, so no layout surprises.
+## Tips
 
-Happy compressing!
+- Lower `--max-page-side` or `--quality` for stronger compression.
+- Raise them when you want a sharper final result.
+- The script does not keep an output file if it is not actually smaller than the original.
+- Output pages keep the same dimensions as the original, which helps preserve layout.
+
+## License
+
+This project is provided as-is for local use and personal workflows. If you are publishing or distributing it publicly, check the repository license before using it in a formal project environment.
+
+## Summary
+
+If your PDFs are mostly scanned pages, this tool is a practical way to shrink them without needing a heavy desktop application or external dependencies beyond PyMuPDF.
